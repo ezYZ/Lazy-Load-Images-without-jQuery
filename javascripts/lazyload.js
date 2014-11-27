@@ -12,6 +12,8 @@
   var lazyLoader = {
     cache: [],
     mobileScreenSize: 500,
+    debounceDelay: 200,
+    debounceTimer: null,
     //tinyGif: 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==',
 
     addObservers: function() {
@@ -24,14 +26,12 @@
       removeEventListener('resize', lazyLoader.throttledLoad, false);
     },
 
-    throttleTimer: new Date().getTime(),
-
     throttledLoad: function() {
-      var now = new Date().getTime();
-      if ((now - lazyLoader.throttleTimer) >= 200) {
-        lazyLoader.throttleTimer = now;
-        lazyLoader.loadVisibleImages();
+      if (!!lazyLoader.debounceTimer) {
+        window.clearTimeout(debounceTimer);
       }
+
+      lazyLoader.debounceTimer = window.setTimeout(lazyLoader.loadVisibleImages, lazyLoader.debounceDelay);
     },
 
     loadVisibleImages: function() {
